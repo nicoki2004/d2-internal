@@ -60,7 +60,6 @@ func ExchangeCode(cfg *config.Config, code string) (*models.Token, error) {
 	}
 
 	defer resp.Body.Close()
-	fmt.Printf("%+v\n", resp.Body)
 	if resp.StatusCode != http.StatusOK {
 		var errorDetail any
 		if err := json.NewDecoder(resp.Body).Decode(&errorDetail); err != nil {

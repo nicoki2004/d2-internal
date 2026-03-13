@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"log"
 	"os"
 )
@@ -37,24 +38,29 @@ func NewStdLogger(debugMode bool) *StdLogger {
 }
 
 func (sl *StdLogger) Info(msg string, args ...interface{}) {
-	sl.infoLog.Printf(msg, args...)
+	s := fmt.Sprintf(msg+"\n", args...)
+	sl.infoLog.Output(2, s)
 }
 
 func (sl *StdLogger) Warn(msg string, args ...interface{}) {
-	sl.warnLog.Printf(msg, args...)
+	s := fmt.Sprintf(msg+"\n", args...)
+	sl.warnLog.Output(2, s)
 }
 
 func (sl *StdLogger) Error(msg string, args ...interface{}) {
-	sl.errorLog.Printf(msg, args...)
+	s := fmt.Sprintf(msg+"\n", args...)
+	sl.errorLog.Output(2, s)
 }
 
 func (sl *StdLogger) Fatal(msg string, args ...interface{}) {
-	sl.fatalLog.Fatalf(msg, args...)
+	s := fmt.Sprintf(msg+"\n", args...)
+	sl.fatalLog.Output(2, s)
 }
 
 func (sl *StdLogger) Debug(msg string, args ...interface{}) {
 	if sl.debugMode {
-		sl.debugLog.Printf(msg, args...)
+		s := fmt.Sprintf(msg+"\n", args...)
+		sl.debugLog.Output(2, s)
 	}
 }
 

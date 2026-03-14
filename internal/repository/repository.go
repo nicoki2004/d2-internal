@@ -22,8 +22,13 @@ func NewSQLDestinyRepository(queries *database.Queries, db *sql.DB) *SQLDestinyR
 
 type DestinyRepository interface {
 	UpsertUser(ctx context.Context, arg database.UpsertUserParams) error
+	GetUser(ctx context.Context, membershipID string) (database.User, error)
 }
 
 func (r *SQLDestinyRepository) UpsertUser(ctx context.Context, arg database.UpsertUserParams) error {
 	return r.queries.UpsertUser(ctx, arg)
+}
+
+func (r *SQLDestinyRepository) GetUser(ctx context.Context, membershipID string) (database.User, error) {
+	return r.queries.GetUser(ctx, membershipID)
 }

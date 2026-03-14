@@ -12,7 +12,9 @@ import (
 	"github.com/nicoki2004/d2-internal/internal/apicfg"
 	"github.com/nicoki2004/d2-internal/internal/config"
 	"github.com/nicoki2004/d2-internal/internal/database"
+	"github.com/nicoki2004/d2-internal/internal/destiny"
 	"github.com/nicoki2004/d2-internal/internal/logger"
+	"github.com/nicoki2004/d2-internal/internal/models"
 	"github.com/nicoki2004/d2-internal/internal/repository"
 )
 
@@ -37,17 +39,19 @@ func main() {
 
 	dbQueries := database.New(dbConn)
 	repo := repository.NewSQLDestinyRepository(dbQueries, dbConn)
+	client := destiny.NewClient(cfg, &models.Token{})
 
 	apiCfg := &apicfg.APIConfig{
-		DB:   dbQueries,
-		Cfg:  cfg,
-		Log:  log,
-		Repo: repo,
+		DB:     dbQueries,
+		Log:    log,
+		Repo:   repo,
+		Client: *client,
 	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", apiCfg.HandlerHome)
 	mux.HandleFunc("/login", apiCfg.HandlerLogin)
+	mux.HandleFunc("/profile", apiCfg.HandlerGetProfile)
 
 	server := &http.Server{
 		Addr:    ":4200",

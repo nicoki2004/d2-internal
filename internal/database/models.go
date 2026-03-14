@@ -5,8 +5,29 @@
 package database
 
 import (
+	"database/sql"
 	"time"
 )
+
+type Character struct {
+	CharacterID          string         `json:"character_id"`
+	ClassType            int64          `json:"class_type"`
+	LightLevel           int64          `json:"light_level"`
+	EmblemUrl            sql.NullString `json:"emblem_url"`
+	LastPlayed           sql.NullTime   `json:"last_played"`
+	EmblemBackgroundPath sql.NullString `json:"emblem_background_path"`
+	TitleRecordHash      interface{}    `json:"title_record_hash"`
+	EmblemColorR         sql.NullInt64  `json:"emblem_color_r"`
+	EmblemColorG         sql.NullInt64  `json:"emblem_color_g"`
+	EmblemColorB         sql.NullInt64  `json:"emblem_color_b"`
+	EmblemColorA         sql.NullInt64  `json:"emblem_color_a"`
+}
+
+type CharacterStat struct {
+	CharacterID string      `json:"character_id"`
+	StatHash    interface{} `json:"stat_hash"`
+	Value       int64       `json:"value"`
+}
 
 type User struct {
 	MembershipID     string    `json:"membership_id"`
@@ -18,4 +39,38 @@ type User struct {
 	ReceivedAt       time.Time `json:"received_at"`
 	CreatedAt        time.Time `json:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at"`
+}
+
+type Weapon struct {
+	InstanceID  string         `json:"instance_id"`
+	Hash        int64          `json:"hash"`
+	Name        string         `json:"name"`
+	Type        string         `json:"type"`
+	Power       int64          `json:"power"`
+	Kills       int64          `json:"kills"`
+	Level       int64          `json:"level"`
+	Location    string         `json:"location"`
+	UpdatedAt   sql.NullTime   `json:"updated_at"`
+	Tier        sql.NullString `json:"tier"`
+	IconUrl     sql.NullString `json:"icon_url"`
+	Slot        sql.NullString `json:"slot"`
+	DamageType  sql.NullString `json:"damage_type"`
+	AmmoType    sql.NullInt64  `json:"ammo_type"`
+	CharacterID sql.NullString `json:"character_id"`
+}
+
+type WeaponPerk struct {
+	ID          int64  `json:"id"`
+	InstanceID  string `json:"instance_id"`
+	PerkHash    int64  `json:"perk_hash"`
+	PerkName    string `json:"perk_name"`
+	IsActive    bool   `json:"is_active"`
+	IsEquipped  bool   `json:"is_equipped"`
+	SocketIndex int64  `json:"socket_index"`
+}
+
+type WeaponStat struct {
+	InstanceID string `json:"instance_id"`
+	StatName   string `json:"stat_name"`
+	Value      int64  `json:"value"`
 }

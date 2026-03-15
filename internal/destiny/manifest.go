@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 )
 
-// Definimos solo lo que necesitamos para ahorrar memoria
 type ManifestItem struct {
 	DisplayProperties struct {
 		Name string `json:"name"`
@@ -24,7 +24,24 @@ type ManifestItem struct {
 	DefaultDamageTypeHash uint32 `json:"defaultDamageTypeHash"`
 }
 
-func LoadManifestMap(filePath string) (map[string]ManifestItem, error) {
+type DestinyRecordDefinition struct {
+	DisplayProperties struct {
+		Name string `json:"name"`
+	} `json:"displayProperties"`
+	TitleInfo struct {
+		HasTitle       bool `json:"hasTitle"`
+		TitlesByGender struct {
+			Male   string `json:"Male"`
+			Female string `json:"Female"`
+		} `json:"titlesByGender"`
+	} `json:"titleInfo"`
+}
+
+type ManifestRecord struct {
+	titles map[uint32]string
+}
+
+func LoadManifestItem(filePath string) (map[string]ManifestItem, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -45,4 +62,40 @@ func LoadManifestMap(filePath string) (map[string]ManifestItem, error) {
 	}
 
 	return manifestMap, nil
+}
+
+func LoadManifestDefinition(path string) (*ManifestRecord, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	// Cargamos el JSON en un mapa de mensajes crudos (sin procesar todavía)
+	var rawManifest map[string]json.RawMessage
+	if err := json.Unmarshal(data, &rawManifest); err != nil {
+		return nil, err
+	}
+
+	processedTitles := make(map[uint32]string)
+
+	for key, value := range rawManifest {
+		var rec DestinyRecordDefinition
+		// Solo parseamos lo necesario para ver si tiene título
+		if err := json.Unmarshal(value, &rec); err != nil {
+			continue
+		}
+
+		if rec.TitleInfo.HasTitle && rec.TitleInfo.TitlesByGender.Male != "" {
+			// Convertimos la llave string a uint32
+			hash, _ := strconv.ParseUint(key, 10, 32)
+			processedTitles[uint32(hash)] = rec.TitleInfo.TitlesByGender.Male
+		}
+	}
+
+	return &ManifestRecord{titles: processedTitles}, nil
+}
+
+// GetTitleName devuelve el nombre o un string vacío si no existe
+func (m *ManifestRecord) GetTitleName(hash uint32) string {
+	return m.titles[hash]
 }

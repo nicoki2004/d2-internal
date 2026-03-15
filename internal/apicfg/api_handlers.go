@@ -9,6 +9,7 @@ import (
 	"github.com/nicoki2004/d2-internal/internal/auth"
 	"github.com/nicoki2004/d2-internal/internal/database"
 	"github.com/nicoki2004/d2-internal/internal/destiny"
+	"github.com/nicoki2004/d2-internal/internal/destiny/character"
 	"github.com/nicoki2004/d2-internal/internal/logger"
 )
 
@@ -32,7 +33,7 @@ func (cfg *APIConfig) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			logger.GetLogger().Debug("Error gettin membership: %v", err)
 		}
-		token.MembershipID = miID.Response.PrimaryMembershipId
+		token.MembershipID = miID.Response.PrimaryMembershipID
 		token.DisplayName = miID.Response.DestinyMemberships[0].DisplayName
 		cfg.Client.Token = token
 
@@ -52,7 +53,7 @@ func (cfg *APIConfig) HandlerHome(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		cfg.Client.Token.MembershipID = miID.Response.PrimaryMembershipId
+		cfg.Client.Token.MembershipID = miID.Response.PrimaryMembershipID
 
 		cfg.Log.Info("Usuario %s persistido correctamente", token.MembershipID)
 
@@ -107,7 +108,7 @@ func (cfg *APIConfig) HandlerGetProfile(w http.ResponseWriter, r *http.Request) 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 
-	manifest, err := destiny.LoadManifestMap("items_manifest.json")
+	manifest, err := destiny.LoadManifestItem("items_manifest.json")
 	if err != nil {
 		log.Error("Error loading manifest: %v", err)
 		return
@@ -119,4 +120,23 @@ func (cfg *APIConfig) HandlerGetProfile(w http.ResponseWriter, r *http.Request) 
 	if err := destiny.SyncInventory(ctx, cfg.Repo, dataProfile, manifest); err != nil {
 		log.Fatal("Error syncing inventory: %v", err)
 	}
+}
+
+func (cfg *APIConfig) HandlerGetCharacters(w http.ResponseWriter, r *http.Request) {
+	result, err := character.GetCharacterProfile(r.Context(), cfg.Repo)
+	if err != nil {
+		http.Error(w, "Error getting characters", http.StatusInternalServerError)
+		return
+	}
+
+	jsonData, err := json.Marshal(result)
+	if err != nil {
+		http.Error(w, "Error processing JSON", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+}
+
+func (cfg *APIConfig) HandlerGetCharactersByID(w http.ResponseWriter, r *http.Request) {
 }

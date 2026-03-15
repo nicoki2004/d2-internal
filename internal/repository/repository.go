@@ -29,6 +29,8 @@ type DestinyRepository interface {
 	ClearWeaponPerks(ctx context.Context, instanceID string) error
 	InsertWeaponPerk(ctx context.Context, params database.InsertWeaponPerkParams) error
 
+	GetCharactersWithStats(ctx context.Context) ([]database.GetCharactersWithStatsRow, error)
+
 	// Save a Character FULL
 	SaveCharacterFull(ctx context.Context, dataCharacter database.UpsertCharacterParams, dataStats []database.UpsertCharacterStatParams) error
 }
@@ -117,4 +119,8 @@ func (r *SQLDestinyRepository) SaveCharacterFull(
 	}
 
 	return tx.Commit()
+}
+
+func (r *SQLDestinyRepository) GetCharactersWithStats(ctx context.Context) ([]database.GetCharactersWithStatsRow, error) {
+	return r.queries.GetCharactersWithStats(ctx)
 }

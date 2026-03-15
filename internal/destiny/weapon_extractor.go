@@ -21,13 +21,13 @@ func (we *WeaponExtractor) ExtractMetadata(item Item, profile *ProfileResponse) 
 	metadata := WeaponMetadata{}
 
 	// Get level, kills and progress
-	level, kills, progress := GetWeaponMetadata(item.ItemInstanceId, profile)
+	level, kills, progress := GetWeaponMetadata(item.ItemInstanceID, profile)
 	metadata.Level = level
 	metadata.Kills = kills
 	metadata.Progress = progress
 
 	// Get power from itemComponents.instances
-	if inst, ok := profile.Response.ItemComponents.Instances.Data[item.ItemInstanceId]; ok {
+	if inst, ok := profile.Response.ItemComponents.Instances.Data[item.ItemInstanceID]; ok {
 		metadata.Power = inst.PrimaryStat.Value
 	}
 
@@ -38,7 +38,7 @@ func (we *WeaponExtractor) ExtractMetadata(item Item, profile *ProfileResponse) 
 func (we *WeaponExtractor) ExtractStats(item Item, profile *ProfileResponse) map[string]int {
 	stats := make(map[string]int)
 
-	if statsData, ok := profile.Response.ItemComponents.Stats.Data[item.ItemInstanceId]; ok {
+	if statsData, ok := profile.Response.ItemComponents.Stats.Data[item.ItemInstanceID]; ok {
 		for hash, stat := range statsData.Stats {
 			if statName, exists := StatsDictionary[hash]; exists {
 				stats[statName] = stat.Value
@@ -53,8 +53,8 @@ func (we *WeaponExtractor) ExtractStats(item Item, profile *ProfileResponse) map
 func (we *WeaponExtractor) ExtractSockets(item Item, profile *ProfileResponse) SocketsData {
 	data := SocketsData{}
 
-	socketsData, hasSockets := profile.Response.ItemComponents.Sockets.Data[item.ItemInstanceId]
-	reusableData, hasReusable := profile.Response.ItemComponents.ReusablePlugs.Data[item.ItemInstanceId]
+	socketsData, hasSockets := profile.Response.ItemComponents.Sockets.Data[item.ItemInstanceID]
+	reusableData, hasReusable := profile.Response.ItemComponents.ReusablePlugs.Data[item.ItemInstanceID]
 
 	data.HasSockets = hasSockets
 	data.HasReusable = hasReusable
@@ -72,16 +72,16 @@ type SocketsData struct {
 	Plugs       ItemReusablePlugsComponent
 }
 
-func GetWeaponMetadata(instanceId string, profile *ProfileResponse) (level int, kills int, progress float64) {
+func GetWeaponMetadata(instanceID string, profile *ProfileResponse) (level int, kills int, progress float64) {
 	// 1. Try component 301 (Standard weapons)
-	if objData, ok := profile.Response.ItemComponents.Objectives.Data[instanceId]; ok {
+	if objData, ok := profile.Response.ItemComponents.Objectives.Data[instanceID]; ok {
 		for _, obj := range objData.Objectives {
 			processObjective(obj, &kills, &progress)
 		}
 	}
 
 	// 2. Try component 309 (Crafted/enhanced weapons like your Commemoration)
-	if plugData, ok := profile.Response.ItemComponents.ItemPlugObjectives.Data[instanceId]; ok {
+	if plugData, ok := profile.Response.ItemComponents.ItemPlugObjectives.Data[instanceID]; ok {
 		for _, objectivesList := range plugData.ObjectivesPerPlug {
 			for _, obj := range objectivesList {
 				processObjective(obj, &kills, &progress)

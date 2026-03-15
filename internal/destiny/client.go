@@ -1,4 +1,4 @@
-// Package apicfg ..
+// Package destiny ..
 package destiny
 
 import (
@@ -12,14 +12,14 @@ import (
 )
 
 type Client struct {
-	HttpClient *http.Client
+	HTTPClient *http.Client
 	Cfg        *config.Config
 	Token      *models.Token
 }
 
 func NewClient(cfg *config.Config, token *models.Token) *Client {
 	return &Client{
-		HttpClient: &http.Client{},
+		HTTPClient: &http.Client{},
 		Cfg:        cfg,
 		Token:      token,
 	}
@@ -47,7 +47,7 @@ func (c *Client) DoRequest(method, url string) (*http.Response, error) {
 		return nil, err
 	}
 	logger.GetLogger().Debug("Calling Bungie: %v", req)
-	resp, err := c.HttpClient.Do(req)
+	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *Client) DoRequest(method, url string) (*http.Response, error) {
 		}
 
 		logger.GetLogger().Info("Token refreshed, retrying original request")
-		return c.HttpClient.Do(req)
+		return c.HTTPClient.Do(req)
 	}
 
 	return resp, nil

@@ -105,7 +105,7 @@ func saveWeaponBase(
 	charID string,
 ) error {
 	return repo.UpsertWeapon(ctx, database.UpsertWeaponParams{
-		InstanceID: item.ItemInstanceId,
+		InstanceID: item.ItemInstanceID,
 		Hash:       int64(item.ItemHash),
 		Name:       def.DisplayProperties.Name,
 		Type:       def.ItemTypeDisplayName,
@@ -131,14 +131,14 @@ func saveWeaponStats(
 	profile *ProfileResponse,
 	extractor *WeaponExtractor,
 ) error {
-	if err := repo.ClearWeaponStats(ctx, item.ItemInstanceId); err != nil {
+	if err := repo.ClearWeaponStats(ctx, item.ItemInstanceID); err != nil {
 		return err
 	}
 
 	stats := extractor.ExtractStats(item, profile)
 	for statName, value := range stats {
 		if err := repo.InsertWeaponStat(ctx, database.InsertWeaponStatParams{
-			InstanceID: item.ItemInstanceId,
+			InstanceID: item.ItemInstanceID,
 			StatName:   statName,
 			Value:      int64(value),
 		}); err != nil {
@@ -159,7 +159,7 @@ func saveWeaponPerks(
 	extractor *WeaponExtractor,
 	validator *PerkValidator,
 ) error {
-	if err := repo.ClearWeaponPerks(ctx, item.ItemInstanceId); err != nil {
+	if err := repo.ClearWeaponPerks(ctx, item.ItemInstanceID); err != nil {
 		return err
 	}
 
@@ -211,7 +211,7 @@ func savePerkOptions(
 		}
 
 		if err := repo.InsertWeaponPerk(ctx, database.InsertWeaponPerkParams{
-			InstanceID:  item.ItemInstanceId,
+			InstanceID:  item.ItemInstanceID,
 			PerkHash:    int64(opt.PlugItemHash),
 			PerkName:    perkDef.DisplayProperties.Name,
 			IsEquipped:  opt.PlugItemHash == socket.PlugHash,
@@ -241,7 +241,7 @@ func saveSinglePerk(
 	}
 
 	return repo.InsertWeaponPerk(ctx, database.InsertWeaponPerkParams{
-		InstanceID:  item.ItemInstanceId,
+		InstanceID:  item.ItemInstanceID,
 		PerkHash:    int64(socket.PlugHash),
 		PerkName:    perkDef.DisplayProperties.Name,
 		IsEquipped:  true,
@@ -253,14 +253,14 @@ func saveCharacter(ctx context.Context, repo repository.DestinyRepository, charD
 	statsParam := make([]database.UpsertCharacterStatParams, 0, len(charData.Stats))
 	for key, value := range charData.Stats {
 		statsParam = append(statsParam, database.UpsertCharacterStatParams{
-			CharacterID: charData.CharacterId,
+			CharacterID: charData.CharacterID,
 			StatHash:    int64(key),
 			Value:       int64(value),
 		})
 	}
 
 	return repo.SaveCharacterFull(ctx, database.UpsertCharacterParams{
-		CharacterID:          charData.CharacterId,
+		CharacterID:          charData.CharacterID,
 		ClassType:            int64(charData.ClassType),
 		LightLevel:           int64(charData.Light),
 		EmblemUrl:            sql.NullString{String: charData.EmblemPath, Valid: true},

@@ -88,12 +88,11 @@ func GetSlotName(hash uint32) string {
 	case 953998645:
 		return "Power" // Slot 3
 	default:
-		// Si ves muchos "Other", imprime el hash aquí para debuguear
 		return "Other"
 	}
 }
 
-// Traduce el DamageTypeHash a texto legible
+// GetDamageName Translate hash to Damage Name
 func GetDamageName(hash uint32) string {
 	switch hash {
 	case 1847026933, 3:
@@ -111,4 +110,24 @@ func GetDamageName(hash uint32) string {
 	default:
 		return "Kinetic" // If it's 0 or unknown, the vast majority are kinetic
 	}
+}
+
+// GetClassName returns the guardian name based on its type (Titan, Hunter, Warlock)
+func GetClassName(classType int) string {
+	return classNames[uint32(classType)]
+}
+
+var classNames = map[uint32]string{
+	0: "Titan",
+	1: "Hunter",
+	2: "Warlock",
+}
+
+var StatHashToName = map[uint32]string{
+	2996146975: "Mobility",
+	392767087:  "Resilience",
+	1943323491: "Recovery",
+	1735777505: "Discipline",
+	144602215:  "Intellect",
+	4244567218: "Strength",
 }

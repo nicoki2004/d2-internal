@@ -7,7 +7,7 @@ import "time"
 type MembershipResponse struct {
 	Response struct {
 		DestinyMemberships  []DestinyMembership `json:"destinyMemberships"`
-		PrimaryMembershipId string              `json:"primaryMembershipId"`
+		PrimaryMembershipID string              `json:"primaryMembershipId"`
 	} `json:"Response"`
 	ErrorCode int    `json:"ErrorCode"`
 	Message   string `json:"Message"`
@@ -16,7 +16,7 @@ type MembershipResponse struct {
 // DestinyMembership represents an individual gaming platform (PS5, Xbox, Steam, etc)
 type DestinyMembership struct {
 	MembershipType          int    `json:"membershipType"`
-	MembershipId            string `json:"membershipId"`
+	MembershipID            string `json:"membershipId"`
 	DisplayName             string `json:"displayName"`
 	BungieGlobalDisplayName string `json:"bungieGlobalDisplayName"`
 }
@@ -80,7 +80,7 @@ type ProfileResponse struct {
 
 // CharacterData represents a user character (Component 200)
 type CharacterData struct {
-	CharacterId      string    `json:"characterId"`
+	CharacterID      string    `json:"characterId"`
 	ClassType        int       `json:"classType"`
 	Light            int       `json:"light"`
 	DateLastPlayed   time.Time `json:"dateLastPlayed"`
@@ -103,29 +103,29 @@ type Color struct {
 // Item representa un elemento en el inventario (arma, armadura, consumible, etc)
 type Item struct {
 	ItemHash       uint32 `json:"itemHash"`       // Definition hash for the item (reference to manifest)
-	ItemInstanceId string `json:"itemInstanceId"` // Unique ID for this specific instance
+	ItemInstanceID string `json:"itemInstanceId"` // Unique ID for this specific instance
 }
 
 type CharacterEquipmentData struct {
 	Items []Item `json:"items"`
 }
 
-// For Power (Component 300)
+// ItemInstanceData - For Power (Component 300)
 type ItemInstanceData struct {
 	PrimaryStat struct {
 		Value int `json:"value"` // Power lives here (460)
 	} `json:"primaryStat"`
 }
 
-// For Kills and Level (Component 301)
+// ItemObjectivesComponent - For Kills and Level (Component 301)
 type ItemObjectivesComponent struct {
 	Objectives []ObjectiveData `json:"objectives"`
 }
 
 type ObjectiveData struct {
-	ObjectiveHash   uint32 `json:"objectiveHash"`   // MUST be camelCase
-	Progress        int    `json:"progress"`        // MUST be lowercase
-	CompletionValue int    `json:"completionValue"` // MUST be camelCase
+	ObjectiveHash   uint32 `json:"objectiveHash"`
+	Progress        int    `json:"progress"`
+	CompletionValue int    `json:"completionValue"`
 	Complete        bool   `json:"complete"`
 	Visible         bool   `json:"visible"`
 }
@@ -141,13 +141,12 @@ type StatData struct {
 	Value    int    `json:"value"`
 }
 
-// Auxiliary struct for 309
+// ItemPlugObjectivesComponent - Auxiliary struct for 309
 type ItemPlugObjectivesComponent struct {
-	// CHANGE: Bungie calls it "objectivesPerPlug" internally for each socket
 	ObjectivesPerPlug map[string][]ObjectiveData `json:"objectivesPerPlug"`
 }
 
-// This one stays clean, only with the sockets
+// ItemSocketsComponent -
 type ItemSocketsComponent struct {
 	Sockets []SocketEntry `json:"sockets"`
 }
@@ -158,7 +157,7 @@ type SocketEntry struct {
 	IsVisible bool   `json:"isVisible"`
 }
 
-// These remain the same
+// ItemReusablePlugsComponent ..
 type ItemReusablePlugsComponent struct {
 	Plugs map[string][]PlugEntry `json:"plugs"`
 }

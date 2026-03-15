@@ -57,7 +57,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    ":4200",
-		Handler: mux,
+		Handler: middlewareCORS(mux),
 	}
 
 	log.Info("🚀 Servidor iniciado en https://localhost:4200")
@@ -65,4 +65,19 @@ func main() {
 	if err := server.ListenAndServeTLS("localhost.pem", "localhost-key.pem"); err != nil {
 		log.Fatal("Error en el servidor: %v", err)
 	}
+}
+
+func middlewareCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*") // En prod pon tu URL
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

@@ -53,6 +53,7 @@ func GetProfile(client *Client, components ...string) (*ProfileResponse, error) 
 	var cachedProfile ProfileResponse
 	if err := cacheManager.Load(cacheFile, &cachedProfile); err == nil {
 		logger.GetLogger().Info("Loading profile from local cache")
+
 		return &cachedProfile, nil
 	}
 
@@ -68,6 +69,7 @@ func GetProfile(client *Client, components ...string) (*ProfileResponse, error) 
 			ItemObjectivesComponentNumber,     // 301
 			CharacterInventoriesComponent,     // 201
 			ItemPlugObjectivesComponentNumber, // 309
+			ProfileInventoriesComponent,
 		}
 	}
 
@@ -84,6 +86,8 @@ func GetProfile(client *Client, components ...string) (*ProfileResponse, error) 
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	logger.GetLogger().Info("%v\n", resp.Body)
 
 	var data ProfileResponse
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {

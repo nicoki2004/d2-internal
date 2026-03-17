@@ -68,6 +68,7 @@ func SaveItem(
 	// Validar que existe en manifest y es un arma
 	hashStr := fmt.Sprintf("%d", item.ItemHash)
 	def, ok := manifest[hashStr]
+
 	if !ok || def.ItemType != 3 {
 		return nil // Not a weapon, not an error
 	}

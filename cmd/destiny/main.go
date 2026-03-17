@@ -53,7 +53,7 @@ func main() {
 	mux.HandleFunc("GET /login", apiCfg.HandlerLogin)
 	mux.HandleFunc("GET /refresh", apiCfg.HandlerGetProfile)
 	mux.HandleFunc("GET /characters", apiCfg.HandlerGetCharacters)
-	mux.HandleFunc("GET /characters/{id}", apiCfg.HandlerGetCharactersByID)
+	mux.HandleFunc("GET /characters/{id}", apiCfg.HandlerGetCharacters)
 
 	server := &http.Server{
 		Addr:    ":4200",

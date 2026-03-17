@@ -49,10 +49,8 @@ func GetCharacterProfile(ctx context.Context, repo repository.DestinyRepository)
 				Stats:     make(map[string]int),
 			}
 
-			// Asigno el Character to the map
 			response[c.CharacterID] = char
 		}
-		// Agrego los stats
 		var stahsHash int64
 		if h, ok := c.StatHash.(int64); ok {
 			stahsHash = int64(h)

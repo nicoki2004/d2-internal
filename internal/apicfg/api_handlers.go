@@ -123,20 +123,39 @@ func (cfg *APIConfig) HandlerGetProfile(w http.ResponseWriter, r *http.Request) 
 }
 
 func (cfg *APIConfig) HandlerGetCharacters(w http.ResponseWriter, r *http.Request) {
+	characterID := r.PathValue("id")
+
 	result, err := character.GetCharacterProfile(r.Context(), cfg.Repo)
 	if err != nil {
+		logger.GetLogger().Error("Error fetching Bungie profile: %v", err)
 		http.Error(w, "Error getting characters", http.StatusInternalServerError)
 		return
 	}
 
-	jsonData, err := json.Marshal(result)
-	if err != nil {
-		http.Error(w, "Error processing JSON", http.StatusInternalServerError)
+	var response interface{}
+
+	if characterID != "" {
+		var selected *character.CharacterDTO
+		for _, char := range result {
+			if char.ID == characterID {
+				c := char
+				selected = &c
+				break
+			}
+		}
+
+		if selected == nil {
+			http.Error(w, "Character not found", http.StatusNotFound)
+			return
+		}
+		response = selected
+	} else {
+		response = result
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonData)
-}
-
-func (cfg *APIConfig) HandlerGetCharactersByID(w http.ResponseWriter, r *http.Request) {
 }

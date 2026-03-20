@@ -82,7 +82,7 @@ func GetStores(data destiny.ProfileResponse) []StoreDTO {
 
 		logger.GetLogger().Debug("Calculo de Store: %v", time.Since(start))
 
-		store.Equipped = item.MapEquippedItems(store.CharacterID, data)
+		store.Equiped = item.MapEquippedItems(store.CharacterID, data)
 
 		result = append(result, store)
 	}

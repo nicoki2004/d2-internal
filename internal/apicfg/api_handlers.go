@@ -62,7 +62,7 @@ func (cfg *APIConfig) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := cfg.Repo.GetUser(r.Context(), "4611686018507435391")
+	user, err := cfg.Repo.GetUser(r.Context(), "")
 	if err != nil {
 		logger.GetLogger().Debug("Error getting user: %v", err)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")

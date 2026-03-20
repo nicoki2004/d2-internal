@@ -33,6 +33,8 @@ type DestinyRepository interface {
 
 	// Save a Character FULL
 	SaveCharacterFull(ctx context.Context, dataCharacter database.UpsertCharacterParams, dataStats []database.UpsertCharacterStatParams) error
+
+	GetAllWeaponsWithPerks(ctx context.Context) ([]database.GetAllWeaponsWithPerksRow, error)
 }
 
 func (r *SQLDestinyRepository) UpsertUser(ctx context.Context, arg database.UpsertUserParams) error {
@@ -123,4 +125,8 @@ func (r *SQLDestinyRepository) SaveCharacterFull(
 
 func (r *SQLDestinyRepository) GetCharactersWithStats(ctx context.Context) ([]database.GetCharactersWithStatsRow, error) {
 	return r.queries.GetCharactersWithStats(ctx)
+}
+
+func (r *SQLDestinyRepository) GetAllWeaponsWithPerks(ctx context.Context) ([]database.GetAllWeaponsWithPerksRow, error) {
+	return r.queries.GetAllWeaponsWithPerks(ctx)
 }

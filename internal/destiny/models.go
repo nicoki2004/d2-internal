@@ -46,6 +46,12 @@ type ProfileResponse struct {
 			Data map[string]CharacterEquipmentData `json:"data"`
 		} `json:"characterEquipment"`
 
+		ProfileRecords struct {
+			Data struct {
+				Records map[uint32]RecordComponent `json:"records"`
+			} `json:"data"`
+		} `json:"profileRecords"`
+
 		// 300-309 - TECHNICAL DETAILS
 		ItemComponents struct {
 			Instances struct {
@@ -78,6 +84,21 @@ type ProfileResponse struct {
 	Message   string `json:"Message"`
 }
 
+type RecordComponent struct {
+	State                  int                 `json:"state"`
+	Objectives             []ObjectiveProgress `json:"objectives"`
+	IntervalsRedeemedCount int                 `json:"intervalsRedeemedCount"`
+	CompletedCount         int                 `json:"completedCount"`
+}
+
+type ObjectiveProgress struct {
+	ObjectiveHash   uint32 `json:"objectiveHash"`
+	Progress        int    `json:"progress"`
+	CompletionValue int    `json:"completionValue"`
+	Complete        bool   `json:"complete"`
+	Visible         bool   `json:"visible"`
+}
+
 // CharacterData represents a user character (Component 200)
 type CharacterData struct {
 	CharacterID      string    `json:"characterId"`
@@ -89,6 +110,8 @@ type CharacterData struct {
 	EmblemBackground string    `json:"emblemBackgroundPath"`
 	EmblemColor      Color     `json:"emblemColor"`
 	TitleHash        uint32    `json:"titleRecordHash"`
+	RaceType         int       `json:"raceType"`
+	GenderType       int       `json:"genderType"`
 }
 
 type Stats map[uint32]int
@@ -112,9 +135,16 @@ type CharacterEquipmentData struct {
 
 // ItemInstanceData - For Power (Component 300)
 type ItemInstanceData struct {
-	PrimaryStat struct {
-		Value int `json:"value"` // Power lives here (460)
+	DamageType     int    `json:"damageType"` // 1: Kinetic, 2: Arc, 3: Solar, 4: Void, 5: Stasis, 6: Strand
+	DamageTypeHash uint32 `json:"damageTypeHash"`
+	PrimaryStat    struct {
+		StatHash uint32 `json:"statHash"`
+		Value    int    `json:"value"` // Power (2010)
 	} `json:"primaryStat"`
+	IsEquipped                  bool     `json:"isEquipped"`
+	CanEquip                    bool     `json:"canEquip"`
+	UnlockHashesRequiredToEquip []uint32 `json:"unlockHashesRequiredToEquip"`
+	EquipRequiredLevel          int      `json:"equipRequiredLevel"`
 }
 
 // ItemObjectivesComponent - For Kills and Level (Component 301)

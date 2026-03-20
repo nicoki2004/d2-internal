@@ -94,10 +94,13 @@ func RefreshToken(cfg *config.Config, oldToken *models.Token) (*models.Token, er
 	if err != nil {
 		return &models.Token{}, err
 	}
+
 	newToken, err := DecodeToken(resp)
 	if err != nil {
 		return &models.Token{}, err
 	}
+
+	newToken.ReceivedAt = time.Now()
 
 	return newToken, nil
 }
@@ -112,6 +115,10 @@ func DecodeToken(resp *http.Response) (*models.Token, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error al decodificar el token de Bungie: %w", err)
 	}
+
+	// Seteamos el momento exacto en que recibimos el JSON.
+	// Esto hace que t.ReceivedAt.Add(t.ExpiresIn) sea un cálculo real.
+	token.ReceivedAt = time.Now()
 
 	return &token, nil
 }

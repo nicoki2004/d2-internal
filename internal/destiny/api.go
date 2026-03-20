@@ -70,6 +70,7 @@ func GetProfile(client *Client, components ...string) (*ProfileResponse, error) 
 			CharacterInventoriesComponent,     // 201
 			ItemPlugObjectivesComponentNumber, // 309
 			ProfileInventoriesComponent,
+			RecordsComponent,
 		}
 	}
 
@@ -86,6 +87,17 @@ func GetProfile(client *Client, components ...string) (*ProfileResponse, error) 
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	// temporal
+	// rawFile, err := os.Create("raw_profile.json")
+	// if err != nil {
+	// 	logger.GetLogger().Warn("Could not create raw file: %v", err)
+	// } else {
+	// 	defer rawFile.Close()
+	// }
+	//
+	// bodyReader := io.TeeReader(resp.Body, rawFile)
+	// hasta aca.
 
 	logger.GetLogger().Info("%v\n", resp.Body)
 

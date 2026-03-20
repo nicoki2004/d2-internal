@@ -1,7 +1,6 @@
 package apicfg
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -10,6 +9,7 @@ import (
 	"github.com/nicoki2004/d2-internal/internal/database"
 	"github.com/nicoki2004/d2-internal/internal/destiny"
 	"github.com/nicoki2004/d2-internal/internal/destiny/character"
+	"github.com/nicoki2004/d2-internal/internal/destiny/store"
 	"github.com/nicoki2004/d2-internal/internal/logger"
 )
 
@@ -99,7 +99,16 @@ func (cfg *APIConfig) HandlerGetProfile(w http.ResponseWriter, r *http.Request) 
 		log.Fatal("Error getting profile: %v", err)
 	}
 
-	jsonData, err := json.Marshal(dataProfile)
+	// jsonData, err := json.Marshal(dataProfile)
+	// if err != nil {
+	// 	http.Error(w, "Error al procesar JSON", http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// Normalize data and create stores
+	stores := store.GetStores(*dataProfile)
+
+	jsonData, err := json.Marshal(stores)
 	if err != nil {
 		http.Error(w, "Error al procesar JSON", http.StatusInternalServerError)
 		return
@@ -108,18 +117,18 @@ func (cfg *APIConfig) HandlerGetProfile(w http.ResponseWriter, r *http.Request) 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonData)
 
-	manifest, err := destiny.LoadManifestItem("items_manifest.json")
-	if err != nil {
-		log.Error("Error loading manifest: %v", err)
-		return
-	}
+	// manifest, err := destiny.LoadManifestItem("items_manifest.json")
+	// if err != nil {
+	// 	log.Error("Error loading manifest: %v", err)
+	// 	return
+	// }
+	//
+	// ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	// defer cancel()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-	defer cancel()
-
-	if err := destiny.SyncInventory(ctx, cfg.Repo, dataProfile, manifest); err != nil {
-		log.Fatal("Error syncing inventory: %v", err)
-	}
+	// if err := destiny.SyncInventory(ctx, cfg.Repo, dataProfile, manifest); err != nil {
+	// 	log.Fatal("Error syncing inventory: %v", err)
+	// }
 }
 
 func (cfg *APIConfig) HandlerGetCharacters(w http.ResponseWriter, r *http.Request) {
@@ -159,3 +168,8 @@ func (cfg *APIConfig) HandlerGetCharacters(w http.ResponseWriter, r *http.Reques
 		return
 	}
 }
+
+// func (cfg *APIConfig) HandlerGetWeapons(w http.ResponseWriter, r *http.Request) {
+// 	characterID := r.PathValue("id")
+// 	result
+// }

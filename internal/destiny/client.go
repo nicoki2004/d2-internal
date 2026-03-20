@@ -26,12 +26,20 @@ func NewClient(cfg *config.Config, token *models.Token) *Client {
 }
 
 func (c *Client) DoRequest(method, url string) (*http.Response, error) {
-	if method == "" {
-		return nil, fmt.Errorf("HTTP method cannot be empty")
+	if method == "" || url == "" {
+		return nil, fmt.Errorf("method and URL cannot be empty")
 	}
-	if url == "" {
-		return nil, fmt.Errorf("URL cannot be empty")
+
+	// Si el token vence en menos de 60s, lo refrescamos antes de la llamada principal.
+	if c.Token.IsExpiredSoon() {
+		logger.GetLogger().Warn("Token por expirar, refrescando preventivamente...")
+		newToken, err := auth.RefreshToken(c.Cfg, c.Token)
+		if err != nil {
+			return nil, fmt.Errorf("error en refresh preventivo: %w", err)
+		}
+		c.Token = newToken
 	}
+
 	makeReq := func() (*http.Request, error) {
 		req, err := http.NewRequest(method, url, nil)
 		if err != nil {
@@ -46,31 +54,26 @@ func (c *Client) DoRequest(method, url string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger.GetLogger().Debug("Calling Bungie: %v", req)
+
+	logger.GetLogger().Debug("Calling Bungie: %s %s", method, url)
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	// If token expired (401)
 	if resp.StatusCode == http.StatusUnauthorized {
 		resp.Body.Close()
-
-		logger.GetLogger().Warn("Token expired, attempting refresh")
+		logger.GetLogger().Warn("Token rechazado (401), intentando refresh reactivo...")
 
 		newToken, err := auth.RefreshToken(c.Cfg, c.Token)
 		if err != nil {
-			return nil, fmt.Errorf("session expired: %w", err)
+			return nil, fmt.Errorf("sesión expirada: %w", err)
 		}
 
 		c.Token = newToken
+		req, _ = makeReq()
 
-		req, err = makeReq()
-		if err != nil {
-			return nil, err
-		}
-
-		logger.GetLogger().Info("Token refreshed, retrying original request")
+		logger.GetLogger().Info("Token refrescado, reintentando request original")
 		return c.HTTPClient.Do(req)
 	}
 

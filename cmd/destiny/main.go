@@ -3,6 +3,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -15,10 +16,19 @@ import (
 	"github.com/nicoki2004/d2-internal/internal/destiny"
 	"github.com/nicoki2004/d2-internal/internal/logger"
 	"github.com/nicoki2004/d2-internal/internal/models"
+	"github.com/nicoki2004/d2-internal/internal/registry"
 	"github.com/nicoki2004/d2-internal/internal/repository"
 )
 
 func main() {
+	registry.InitManifest("./definition_manifest.json")
+	m, err := destiny.LoadManifestItem("./items_manifest.json")
+	if err != nil {
+		logger.GetLogger().Fatal("Error cargando el archivo manifest: %v", err)
+	}
+	registry.InitItemRegistry(m)
+	fmt.Printf("📊 Total de items cargados en memoria: %d\n", len(m))
+
 	if err := gotenv.Load(); err != nil {
 		logger.GetLogger().Debug("No .env file found")
 	}

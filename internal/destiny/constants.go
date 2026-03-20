@@ -1,5 +1,7 @@
 package destiny
 
+import "fmt"
+
 const (
 	PlayStation = 2
 	Steam       = 3
@@ -131,3 +133,194 @@ var StatHashToName = map[uint32]string{
 	144602215:  "Intellect",
 	4244567218: "Strength",
 }
+
+type ItemSlot int
+
+// ItemCategoryHashes: Para saber QUÉ es el objeto (Slot y Tipo)
+const (
+	// Categorías Generales
+	CategoryWeapon ItemSlot = iota
+	SlotUnknown
+	CategoryArmor
+
+	// Slots de Armadura (Siguen funcionando igual para todas las clases)
+	SlotHelmet
+	SlotGauntlets
+	SlotChest
+	SlotLegs
+	SlotClassItem
+	SlotSubclass
+	SlotKinetic
+	SlotEnergy
+	SlotPower
+
+	// Tipos de Arma (Los más comunes para tu UI)
+	TypeAutoRifle
+	TypeHandCannon
+	TypePulseRifle
+	TypeScoutRifle
+	TypeFusionRifle
+	TypeSniperRifle
+	TypeShotgun
+	TypeMachineGun
+	TypeRocketLauncher
+	TypeSidearm
+	TypeSword
+	TypeGrenadeLauncher
+	TypeBow
+	TypeGlaive
+	TypeLinearFusion
+	TypeSubmachineGun
+	TypeTraceRifle
+
+	SlotGhost
+	SlotVehicle
+	SlotShip
+	SlotEmblem
+	SlotClanBanner
+	SlotFinisher
+	SlotEmote
+	SlotArtifact
+)
+
+var HashToSlot = map[uint32]ItemSlot{
+	2:  SlotKinetic,
+	3:  SlotEnergy,
+	4:  SlotPower,
+	45: SlotHelmet,
+	46: SlotGauntlets,
+	47: SlotChest,
+	48: SlotLegs,
+	49: SlotClassItem,
+	50: SlotSubclass,
+
+	39:         SlotGhost,
+	43:         SlotVehicle,
+	42:         SlotShip,
+	19:         SlotEmblem,
+	58:         SlotClanBanner,
+	1112488720: SlotFinisher,
+	44:         SlotEmote,
+	1378222069: SlotArtifact,
+}
+
+var HashToType = map[uint32]ItemSlot{
+	5:          TypeAutoRifle,
+	6:          TypeHandCannon,
+	7:          TypePulseRifle,
+	8:          TypeScoutRifle,
+	9:          TypeFusionRifle,
+	10:         TypeSniperRifle,
+	11:         TypeShotgun,
+	12:         TypeMachineGun,
+	13:         TypeRocketLauncher,
+	14:         TypeSidearm,
+	54:         TypeSword,
+	3317538576: TypeBow,
+	3954685534: TypeSubmachineGun,
+	153950757:  TypeGrenadeLauncher,
+	3871742104: TypeGlaive,
+	1504945536: TypeLinearFusion,
+	2489664120: TypeTraceRifle,
+}
+
+var SlotNames = map[ItemSlot]string{
+	CategoryWeapon: "Weapon",
+	CategoryArmor:  "Armor",
+
+	// Slots de Armadura (Siguen funcionando igual para todas las clases)
+	SlotHelmet:    "Helmet",
+	SlotGauntlets: "Gauntlets",
+	SlotChest:     "Chest",
+	SlotLegs:      "Legs",
+	SlotClassItem: "ClassItem",
+	SlotSubclass:  "SubClass",
+	SlotKinetic:   "Kinetic",
+	SlotEnergy:    "Energy",
+	SlotPower:     "Power",
+
+	// Tipos de Arma (Los más comunes para tu UI)
+	TypeAutoRifle:       "Auto Rifle",
+	TypeHandCannon:      "Hand Cannon",
+	TypePulseRifle:      "Pulse Rifle",
+	TypeScoutRifle:      "Scout Rifle",
+	TypeFusionRifle:     "Fusion Rifle",
+	TypeSniperRifle:     "Sniper Rifle",
+	TypeShotgun:         "Shotgun",
+	TypeMachineGun:      "Machine Gun",
+	TypeRocketLauncher:  "Rocket Launcher",
+	TypeSidearm:         "Sidearms",
+	TypeSword:           "Sword",
+	TypeSubmachineGun:   "Submachine Gun",
+	SlotUnknown:         "Unknown",
+	TypeGrenadeLauncher: "Grenade Launcher",
+	TypeBow:             "Bow",
+	TypeGlaive:          "Glaive",
+	TypeLinearFusion:    "Linear Fusion Rifle",
+	TypeTraceRifle:      "Trace Rifle",
+
+	SlotGhost:      "Ghost Shell",
+	SlotVehicle:    "Vehicle",
+	SlotShip:       "Ship",
+	SlotEmblem:     "Emblem",
+	SlotClanBanner: "Clan Banner",
+	SlotFinisher:   "Finisher",
+	SlotEmote:      "Emote",
+	SlotArtifact:   "Seasonal Artifact",
+}
+
+func GetItemIdentity(hashes []uint32) (string, string) {
+	detectedType := SlotUnknown
+	detectedSlot := SlotUnknown
+
+	for _, h := range hashes {
+		// 1. Intentar identificar el Slot (Kinetic, Energy, Helmet, etc.)
+		if slotName, ok := HashToSlot[h]; ok {
+			detectedSlot = slotName
+		}
+		// 2. Intentar identificar el Tipo específico (Hand Cannon, SMG, etc.)
+		if typeName, ok := HashToType[h]; ok {
+			detectedType = typeName
+		}
+	}
+
+	// Fallback: Si no detectamos un tipo específico (como en armaduras),
+	// usamos el SlotName como tipo.
+	if detectedType == SlotUnknown {
+		detectedType = detectedSlot
+	}
+
+	return SlotNames[detectedType], SlotNames[detectedSlot]
+}
+
+func (s ItemSlot) MarshalJSON() ([]byte, error) {
+	name, ok := SlotNames[s]
+	if !ok {
+		name = "Unknown"
+	}
+	return fmt.Appendf(nil, "%q", name), nil
+}
+
+// PlugCategoryHashes: Para saber qué tiene PUESTO el objeto (Stats y Estética)
+const (
+	// Masterwork (Obra Maestra)
+	// Si un socket tiene este hash, el ítem tiene el borde dorado
+	PlugMasterworkArmor  = 2457930460
+	PlugMasterworkWeapon = 782502718
+
+	// Elementos de Subclase (Para tu visor de builds)
+	PlugSubclassAspect   = 3032847657
+	PlugSubclassFragment = 1920373979
+
+	// Prisma (Específicos para el gradiente de color en Astro)
+	PlugTitanPrismAspect   = 912150793
+	PlugHunterPrismAspect  = 1164816619
+	PlugWarlockPrismAspect = 3154627255 // (Dato de DIM)
+)
+
+// TierType: Para rarezas (Vital para los colores de la UI)
+const (
+	TierExotic    = 6
+	TierLegendary = 5
+	TierRare      = 4 // Azul
+)

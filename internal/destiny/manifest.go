@@ -12,10 +12,12 @@ type ManifestItem struct {
 		Name string `json:"name"`
 		Icon string `json:"icon"`
 	} `json:"displayProperties"`
-	ItemTypeDisplayName string `json:"itemTypeDisplayName"`
-	ItemType            int    `json:"itemType"`
+	ItemCategoryHashes  []uint32 `json:"itemCategoryHashes"`
+	ItemTypeDisplayName string   `json:"itemTypeDisplayName"`
+	ItemType            int      `json:"itemType"`
 	Inventory           struct {
-		TierTypeName   string `json:"tierTypeName"`   // "Exotic"
+		TierTypeName   string `json:"tierTypeName"` // "Exotic"
+		TierType       int    `json:"tierType"`
 		BucketTypeHash uint32 `json:"bucketTypeHash"` // Para el Slot
 	} `json:"inventory"`
 	EquippingBlock struct {
@@ -41,21 +43,17 @@ type ManifestRecord struct {
 	titles map[uint32]string
 }
 
-func LoadManifestItem(filePath string) (map[string]ManifestItem, error) {
+func LoadManifestItem(filePath string) (map[uint32]ManifestItem, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	// Create the map where we'll store the "translation"
-	// We use string as key because the manifest JSON has hashes as strings
-	manifestMap := make(map[string]ManifestItem)
+	manifestMap := make(map[uint32]ManifestItem)
 
 	decoder := json.NewDecoder(file)
 
-	// The manifest is a giant object { "hash": {data}, "hash2": {data} }
-	// Decode() will process it efficiently
 	err = decoder.Decode(&manifestMap)
 	if err != nil {
 		return nil, fmt.Errorf("error decoding manifest: %w", err)

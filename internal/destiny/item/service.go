@@ -9,24 +9,19 @@ import (
 func MapEquippedItems(charID string, data destiny.ProfileResponse) []ItemDTO {
 	items := []ItemDTO{}
 
-	// 1. Buscamos qué tiene puesto el personaje (Componente 205)
 	equippedData, ok := data.Response.CharacterEquipment.Data[charID]
 	if !ok {
 		return items
 	}
 
 	for _, item := range equippedData.Items {
-		// 2. Datos Estáticos (Manifest)
 		def, found := registry.GetItem(item.ItemHash)
 
 		if !found {
-			// Logueamos pero con Debug o una sola vez para no spamear
 			logger.GetLogger().Warn("Registry miss: %d", item.ItemHash)
 			continue
 		}
-		// def := manifest.GetItemDefinition(item.ItemHash)
 
-		// 3. Datos Dinámicos (Instancia - Componente 300)
 		instance, ok := data.Response.ItemComponents.Instances.Data[item.ItemInstanceID]
 		if !ok {
 			continue

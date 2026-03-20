@@ -228,7 +228,6 @@ var SlotNames = map[ItemSlot]string{
 	CategoryWeapon: "Weapon",
 	CategoryArmor:  "Armor",
 
-	// Slots de Armadura (Siguen funcionando igual para todas las clases)
 	SlotHelmet:    "Helmet",
 	SlotGauntlets: "Gauntlets",
 	SlotChest:     "Chest",
@@ -239,7 +238,6 @@ var SlotNames = map[ItemSlot]string{
 	SlotEnergy:    "Energy",
 	SlotPower:     "Power",
 
-	// Tipos de Arma (Los más comunes para tu UI)
 	TypeAutoRifle:       "Auto Rifle",
 	TypeHandCannon:      "Hand Cannon",
 	TypePulseRifle:      "Pulse Rifle",
@@ -274,18 +272,16 @@ func GetItemIdentity(hashes []uint32) (string, string) {
 	detectedSlot := SlotUnknown
 
 	for _, h := range hashes {
-		// 1. Intentar identificar el Slot (Kinetic, Energy, Helmet, etc.)
+
 		if slotName, ok := HashToSlot[h]; ok {
 			detectedSlot = slotName
 		}
-		// 2. Intentar identificar el Tipo específico (Hand Cannon, SMG, etc.)
+
 		if typeName, ok := HashToType[h]; ok {
 			detectedType = typeName
 		}
 	}
 
-	// Fallback: Si no detectamos un tipo específico (como en armaduras),
-	// usamos el SlotName como tipo.
 	if detectedType == SlotUnknown {
 		detectedType = detectedSlot
 	}
@@ -301,26 +297,20 @@ func (s ItemSlot) MarshalJSON() ([]byte, error) {
 	return fmt.Appendf(nil, "%q", name), nil
 }
 
-// PlugCategoryHashes: Para saber qué tiene PUESTO el objeto (Stats y Estética)
 const (
-	// Masterwork (Obra Maestra)
-	// Si un socket tiene este hash, el ítem tiene el borde dorado
 	PlugMasterworkArmor  = 2457930460
 	PlugMasterworkWeapon = 782502718
 
-	// Elementos de Subclase (Para tu visor de builds)
 	PlugSubclassAspect   = 3032847657
 	PlugSubclassFragment = 1920373979
 
-	// Prisma (Específicos para el gradiente de color en Astro)
 	PlugTitanPrismAspect   = 912150793
 	PlugHunterPrismAspect  = 1164816619
-	PlugWarlockPrismAspect = 3154627255 // (Dato de DIM)
+	PlugWarlockPrismAspect = 3154627255
 )
 
-// TierType: Para rarezas (Vital para los colores de la UI)
 const (
 	TierExotic    = 6
 	TierLegendary = 5
-	TierRare      = 4 // Azul
+	TierRare      = 4
 )

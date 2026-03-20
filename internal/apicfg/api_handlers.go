@@ -99,13 +99,6 @@ func (cfg *APIConfig) HandlerGetProfile(w http.ResponseWriter, r *http.Request) 
 		log.Fatal("Error getting profile: %v", err)
 	}
 
-	// jsonData, err := json.Marshal(dataProfile)
-	// if err != nil {
-	// 	http.Error(w, "Error al procesar JSON", http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// Normalize data and create stores
 	stores := store.GetStores(*dataProfile)
 
 	jsonData, err := json.Marshal(stores)

@@ -14,7 +14,7 @@ type ItemDTO struct {
 	Name               string   `json:"name"`
 	Icon               string   `json:"icon"`
 	ItemType           ItemType `json:"itemType"`
-	TierName           string   `json:"tierName"` // "Exotic", "Legendary"
+	TierName           string   `json:"tierName"`
 	IsExotic           bool     `json:"isExotic"`
 	Power              int      `json:"power"`
 	IsEquipped         bool     `json:"isEquipped"`
@@ -27,11 +27,11 @@ type ItemDTO struct {
 }
 
 type WeaponSpec struct {
-	TypeName   string `json:"typeName"`   // "Hand Cannon"
-	DamageType int    `json:"damageType"` // 1: Kinetic, 2: Arc, etc.
-	AmmoType   int    `json:"ammoType"`   // 1: Primary, 2: Special...
+	TypeName   string `json:"typeName"`
+	DamageType int    `json:"damageType"`
+	AmmoType   int    `json:"ammoType"`
 }
 
 type ArmorSpec struct {
-	SlotName string `json:"slotName"` // "Helmet", "Chest"
+	SlotName string `json:"slotName"`
 }

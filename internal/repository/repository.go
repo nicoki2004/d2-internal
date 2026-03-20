@@ -31,7 +31,6 @@ type DestinyRepository interface {
 
 	GetCharactersWithStats(ctx context.Context) ([]database.GetCharactersWithStatsRow, error)
 
-	// Save a Character FULL
 	SaveCharacterFull(ctx context.Context, dataCharacter database.UpsertCharacterParams, dataStats []database.UpsertCharacterStatParams) error
 
 	GetAllWeaponsWithPerks(ctx context.Context) ([]database.GetAllWeaponsWithPerksRow, error)

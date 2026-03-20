@@ -1,12 +1,13 @@
 # d2-internal
 
-Internal service for a Destiny 2 armory prototype. It handles Bungie OAuth, fetches profile data, syncs weapons and character stats into a local SQLite database, and exposes a small HTTPS API for reading that data.
+Internal service for a Destiny 2 armory prototype. It handles Bungie OAuth, fetches profile data, builds a normalized JSON response for the UI, and uses SQLite only to persist OAuth tokens.
 
 ## What it does
 
 - OAuth login with Bungie and token persistence in SQLite.
 - Fetches the Destiny 2 profile from Bungie and optionally caches it locally.
-- Syncs characters, character stats, weapons, weapon stats, and weapon perks into SQLite.
+- Loads item and definition manifests into memory for fast lookups.
+- Returns normalized JSON (stores + equipped items) without persisting game data.
 - Exposes a minimal HTTPS API for login, profile refresh, and character listing.
 
 ## Current API
@@ -21,11 +22,11 @@ Routes registered in `cmd/destiny/main.go`:
 - `GET /login`
   - Redirects to Bungie OAuth login.
 - `GET /refresh`
-  - Fetches the Bungie profile, returns it as JSON, then syncs weapons/characters into SQLite.
+  - Fetches the Bungie profile and returns normalized JSON built in memory.
 - `GET /characters`
-  - Returns an array of characters with computed stats from SQLite.
+  - Returns an array of characters from SQLite (legacy, requires preloaded DB).
 - `GET /characters/{id}`
-  - Returns a single character by ID.
+  - Returns a single character by ID from SQLite (legacy, requires preloaded DB).
 
 There is a weapons service stub in `internal/destiny/weapon/service.go`, but no endpoint is currently wired for it.
 
@@ -33,7 +34,7 @@ There is a weapons service stub in `internal/destiny/weapon/service.go`, but no 
 
 - Go 1.25+
 - A Bungie API key and OAuth app
-- SQLite (used via `github.com/glebarez/go-sqlite`)
+- SQLite (used via `github.com/glebarez/go-sqlite` for token storage)
 
 ## Configuration
 
@@ -66,17 +67,16 @@ If you replace them, keep the same filenames or update the code in `cmd/destiny/
 
 SQLite schema lives in `sql/schema`:
 
-- `users` (OAuth tokens and membership info)
-- `characters` and `character_stats`
-- `weapons`, `weapon_stats`, `weapon_perks`
+- `users` (OAuth tokens and membership info) is the only table used in the current flow.
+- `characters`, `character_stats`, `weapons`, `weapon_stats`, `weapon_perks` are legacy and not written by `/refresh`.
 
 Query code is generated with `sqlc` using `sqlc.yaml` and output to `internal/database`.
 
 ## Manifests and cache files
 
-The service relies on local manifest files checked into the repo:
+The service relies on local manifest files checked into the repo and loads them into memory at startup:
 
-- `items_manifest.json` for item definitions (weapons, tiers, icons, etc.)
+- `items_manifest.json` for item definitions (names, tiers, icons, categories, etc.)
 - `definition_manifest.json` for title/record definitions
 
 The profile cache (if enabled) is stored in `profile_cache.json` (or `CACHE_FILE_NAME`).

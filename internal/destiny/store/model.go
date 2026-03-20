@@ -9,14 +9,11 @@ import (
 type StoreDTO struct {
 	CharacterID string
 	Name        string
-	// Make a Store Vault or Character
-	IsVault bool
-	// Class
-	ClassType int
-	ClassName string
-	// Gender
-	GenderType string
-	GenderName string
+	IsVault     bool
+	ClassType   int
+	ClassName   string
+	GenderType  string
+	GenderName  string
 
 	Emblem     Embleminfo
 	Current    bool
@@ -85,7 +82,6 @@ func GetRaceName(raceType int) string {
 	case 1:
 		return "Awoken"
 	case 2:
-		// En la API 2 suele ser Exo
 		return "Exo"
 	default:
 		return "Desconocido"

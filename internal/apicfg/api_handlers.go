@@ -3,7 +3,10 @@ package apicfg
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	"time"
+
+	"github.com/subosito/gotenv"
 
 	"github.com/nicoki2004/d2-internal/internal/auth"
 	"github.com/nicoki2004/d2-internal/internal/database"
@@ -62,7 +65,12 @@ func (cfg *APIConfig) HandlerHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := cfg.Repo.GetUser(r.Context(), "")
+	if err := gotenv.Load(); err != nil {
+		logger.GetLogger().Debug("No .env file found")
+	}
+	userCode := os.Getenv("USER_CODE")
+
+	user, err := cfg.Repo.GetUser(r.Context(), userCode)
 	if err != nil {
 		logger.GetLogger().Debug("Error getting user: %v", err)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")

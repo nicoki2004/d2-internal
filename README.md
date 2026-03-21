@@ -93,7 +93,7 @@ Notes:
 go run ./cmd/destiny
 ```
 
-### Then open:
+## Usage:
 
 - `https://localhost:4200/login` to start Bungie OAuth
 - `https://localhost:4200/refresh` to fetch and sync your profile
@@ -118,3 +118,26 @@ go run ./cmd/destiny
 - Save hashed tokens.
 - Add more functionality.
 - Add search for users.
+
+## 🤝 Contributing
+
+### Clone the repo
+
+```bash
+git clone https://github.com/nicoki2004/d2-internal
+cd d2-internal
+```
+
+### Configure .env
+
+See QuickStart/Configuration
+
+### Run tests
+
+```bash
+go test ./...
+```
+
+### Submit a pull request
+
+If you'd like to contribute, please fork the repository and open a pull request to the `main` branch.

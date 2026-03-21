@@ -12,8 +12,7 @@ Internal service for a Destiny 2 armory prototype. It handles Bungie OAuth, fetc
 
 ## Motivation
 
-The motivation behind this project is to put my Go knowledge into practice. By applying what I’ve learned, I aim to build an API that integrates with Bungie’s API to retrieve and expose its data in a simple and easy-to-use way.
-The project is designed to scale toward supporting the full range of Bungie API features, such as viewing characters, managing items, and transferring them between characters and the Vault. Additionally, it will include functionality to validate god rolls.
+There are several companion apps for Destiny 2, but the idea behind this project is to build something simpler. Using Go for the backend, the goal is to create a service that supports all the basic functionalities provided by the Bungie API. This backend can then be consumed by any frontend.
 
 ## Current API
 

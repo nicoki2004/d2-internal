@@ -2,13 +2,18 @@
 
 Internal service for a Destiny 2 armory prototype. It handles Bungie OAuth, fetches profile data, builds a normalized JSON response for the UI, and uses SQLite only to persist OAuth tokens.
 
-## What it does
+## Description
 
 - OAuth login with Bungie and token persistence in SQLite.
 - Fetches the Destiny 2 profile from Bungie and optionally caches it locally.
 - Loads item and definition manifests into memory for fast lookups.
 - Returns normalized JSON (stores + equipped items) without persisting game data.
 - Exposes a minimal HTTPS API for login, profile refresh, and character listing.
+
+## Motivation
+
+The motivation behind this project is to put my Go knowledge into practice. By applying what I’ve learned, I aim to build an API that integrates with Bungie’s API to retrieve and expose its data in a simple and easy-to-use way.
+The project is designed to scale toward supporting the full range of Bungie API features, such as viewing characters, managing items, and transferring them between characters and the Vault. Additionally, it will include functionality to validate god rolls.
 
 ## Current API
 
@@ -81,7 +86,7 @@ The service relies on local manifest files checked into the repo and loads them 
 
 The profile cache (if enabled) is stored in `profile_cache.json` (or `CACHE_FILE_NAME`).
 
-## Running locally
+## Quick Start
 
 From the repo root:
 
@@ -110,8 +115,7 @@ Then open:
 ## Known gaps / WIP
 
 - Weapons endpoint and DTOs are incomplete (`internal/destiny/weapon/service.go`).
-- Error handling around missing users in `/` uses a hardcoded membership ID for fallback.
-
-## License
-
-No license has been specified yet.
+- More tests.
+- Save hashed tokens.
+- Add more functionality.
+- Add search for users.

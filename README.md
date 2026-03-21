@@ -40,27 +40,6 @@ There is a weapons service stub in `internal/destiny/weapon/service.go`, but no 
 - A Bungie API key and OAuth app
 - SQLite (used via `github.com/glebarez/go-sqlite` for token storage)
 
-## Configuration
-
-The app loads environment variables via `.env` (using `github.com/subosito/gotenv`). Required variables are validated at startup.
-
-Create a `.env` file at the repo root with:
-
-```env
-BUNGIE_API_KEY=your_key
-BUNGIE_OAUTH_CLIENT_ID=your_client_id
-BUNGIE_OAUTH_CLIENT_SECRET=your_client_secret
-BUNGIE_OAUTH_REDIRECT_URI=https://localhost:4200/
-DB_NAME=./destiny.db
-CACHE_FILE_NAME=./profile_cache.json
-```
-
-Notes:
-
-- `DB_NAME` points to the SQLite file. The repo already includes `destiny.db` for local testing.
-- `CACHE_FILE_NAME` is optional. If not set, it defaults to `profile_cache.json`.
-- The redirect URI must match your Bungie OAuth app settings.
-
 ## TLS certificates
 
 The server starts with `ListenAndServeTLS("localhost.pem", "localhost-key.pem")`. The repo includes those files for local development.
@@ -87,13 +66,34 @@ The profile cache (if enabled) is stored in `profile_cache.json` (or `CACHE_FILE
 
 ## Quick Start
 
-From the repo root:
+### Configuration
+
+The app loads environment variables via `.env` (using `github.com/subosito/gotenv`). Required variables are validated at startup.
+
+Create a `.env` file at the repo root with:
+
+```env
+BUNGIE_API_KEY=your_key
+BUNGIE_OAUTH_CLIENT_ID=your_client_id
+BUNGIE_OAUTH_CLIENT_SECRET=your_client_secret
+BUNGIE_OAUTH_REDIRECT_URI=https://localhost:4200/
+DB_NAME=./destiny.db
+CACHE_FILE_NAME=./profile_cache.json
+```
+
+Notes:
+
+- `DB_NAME` points to the SQLite file.
+- `CACHE_FILE_NAME` is optional. If not set, it defaults to `profile_cache.json`.
+- The redirect URI must match your Bungie OAuth app settings.
+
+### From the repo root:
 
 ```bash
 go run ./cmd/destiny
 ```
 
-Then open:
+### Then open:
 
 - `https://localhost:4200/login` to start Bungie OAuth
 - `https://localhost:4200/refresh` to fetch and sync your profile
